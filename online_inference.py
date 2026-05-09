@@ -43,8 +43,7 @@ class NeuroSymbolicCorrector:
 
     def solve_tie(self, candidates):
         """
-        处理平局 (Tie-Breaking)
-        仅在分差极小且字符串优势明显时触发
+        handle Tie-Breaking
         candidates: list of (idx, score, feats)
         """
         if len(candidates) < 2: return candidates, None
@@ -199,7 +198,7 @@ for idx in tqdm(range(len(parsed_text))):
 
     candidates = list(candidate_indices_set)
     
-    # --- C. 构建特征 ---
+    # --- C. Construct Features ---
     batch_features = []
     valid_candidates = []
     
@@ -246,7 +245,7 @@ for idx in tqdm(range(len(parsed_text))):
         s_new, _ = corrector.apply(base_scores[i], X[i])
         final_scores.append(s_new)
     
-    # --- E. 排序 ---
+    # --- E. Ranking ---
     combined = list(zip(valid_candidates, final_scores, batch_features))
     combined.sort(key=lambda x: x[1], reverse=True)
     
