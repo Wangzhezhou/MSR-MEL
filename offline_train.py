@@ -190,10 +190,10 @@ class Pool(nn.Module):
 
 class SubgraphGCL(nn.Module):
     """
-    一个统一的 GCL 模型：
-    - loss_subcon: 基于 node/subgraph 的结构自监督
-    - loss_llm_infoNCE: 节点 embedding vs LLM embedding 的 InfoNCE
-    - loss_xmodal_infoNCE: 文本 vs 图像（同一个节点）的 cross-modal InfoNCE
+    Unified GCL Model：
+    - loss_subcon
+    - loss_llm_infoNCE
+    - loss_xmodal_infoNCE:
     """
     def __init__(self, hidden_channels, encoder, pool):
         super(SubgraphGCL, self).__init__()
@@ -257,14 +257,13 @@ class SubgraphGCL(nn.Module):
 
 def align_space(X_src, X_tgt, alpha=1.0):
     """
-    使用 Ridge Regression 将 X_src 映射到 X_tgt 的空间。
+    Use Ridge Regression map X_src to X_tgt space。
     """
     print(f"Aligning embeddings (Ridge Regression): Source {X_src.shape} -> Target {X_tgt.shape}...")
-    # 转为 numpy 进行 sklearn 训练
+    
     if isinstance(X_src, torch.Tensor): X_src = X_src.cpu().numpy()
     if isinstance(X_tgt, torch.Tensor): X_tgt = X_tgt.cpu().numpy()
     
-    # 确保输入是 2D
     if X_src.ndim > 2: X_src = X_src.reshape(X_src.shape[0], -1)
     if X_tgt.ndim > 2: X_tgt = X_tgt.reshape(X_tgt.shape[0], -1)
 
@@ -363,7 +362,6 @@ def build_multimodal_graph(
     if len(target_entity_indices_2k) > 0:
         print("Applying Mutual Verification for 2k LLM Entities...")
         
-        # 计算: Entity LLM (2k) vs Mention Text (All)
         # e_llm_aligned_2k: [2000, D] (Normalized)
         # m_txt: [N_men, D] (Normalized)
         sim_mutual = torch.matmul(e_llm_aligned_2k, m_txt.t()) # [2000, N_men]
